@@ -1,0 +1,49 @@
+The system should:
+
+- Ingest and store all available data from the API, including:
+
+  Upcoming event schedules
+  Course details & statistics
+  Jockey and trainer performance metrics
+  Live & historical market odds
+  Weather conditions at event locations via a forecast API
+
+- Utilize a vector database (Milvus) for optimized retrieval and AI-powered queries.
+- Update every hour between 9 AM - 6 PM to ensure fresh data.
+- Be fully queryable via ChatGPT, allowing for dynamic insights and predictive analysis.
+
+Key Requirements:
+
+1. API Data Integration
+   Authenticate and pull ALL available data from the Racing API.
+   Integrate a weather API to track forecasts for event locations.
+   Ensure API calls handle pagination, rate limits, and retries effectively.
+
+2. Auto-Updating Data Pipeline
+
+- Build a scheduled data sync to update records every hour (9 AM - 6 PM).
+- Structure data efficiently to handle real-time queries with minimal latency.
+
+3. Database & Storage Solution
+
+- Implement a high-performance vector database (e.g., Weaviate, Pinecone, FAISS, or Milvus) to enable fast and intelligent retrieval.
+- Ensure scalability for future data expansions and historical queries.
+
+4. AI Query & Analysis Layer
+
+- Develop an interface/API layer for ChatGPT to interact with the database.
+- Structure responses to generate advanced insights from raw data (e.g., trend analysis, odds movements, jockey performance predictions).
+
+5. Performance Optimization & Automation
+
+- Optimize queries for speed and efficiency (indexing, caching, precomputed analytics).
+- Ensure robust logging and error handling for uninterrupted performance.
+
+Deliverables:
+
+✅ Python-based data ingestion pipeline fetching all relevant API data.
+✅ Vector database storing & structuring the data for AI-powered queries.
+✅ Scheduled hourly updates (9 AM - 6 PM) with optimized performance.
+✅ Queryable AI interface to extract insights from all available data.
+✅ Integration with OpenAI's GPT API for racing analysis automation.
+✅ Documentation covering setup, API integration, and query examples.
