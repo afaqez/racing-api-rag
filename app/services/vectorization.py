@@ -32,27 +32,29 @@ def vectorize_new_racecards(limit: int = 10):
             text_components = [
                 f"Race: {rc.race_name} at {rc.course}",
                 f"Date: {rc.date}",
-                "Horses:",
+                f"Distance: {rc.distance}",
+                f"Going: {rc.going}",
+                "Runners:",
             ]
 
-            # Add horse information
-            for horse in rc.horses:
-                horse_info = [
-                    f"  - Name: {horse.name}",
-                    f"    Age: {horse.age} {horse.sex}",
-                    f"    Breeding: by {horse.sire} out of {horse.dam}",
-                    f"    Trainer: {horse.trainer} ({horse.trainer_location})",
-                    f"    Recent form: {horse.form}",
+            # Add runner information from the raw_data
+            runners = rc.raw_data.get("runners", []) if rc.raw_data else []
+            for runner in runners:
+                runner_info = [
+                    f"  - Horse: {runner.get('horse_name', 'N/A')}",
+                    f"    Jockey: {runner.get('jockey_name', 'N/A')}",
+                    f"    Trainer: {runner.get('trainer_name', 'N/A')}",
+                    f"    Weight: {runner.get('weight', 'N/A')}",
+                    f"    Draw: {runner.get('draw', 'N/A')}",
                 ]
-                if horse.trainer_rtf:
-                    horse_info.append(f"    Trainer RTF: {horse.trainer_rtf}")
-                if horse.odds:
-                    horse_info.append(f"    Current odds: {horse.odds}")
-                text_components.extend(horse_info)
+                if runner.get("odds"):
+                    runner_info.append(f"    Odds: {runner.get('odds')}")
+                text_components.extend(runner_info)
 
             # Join all components with proper spacing
             comprehensive_text = "\n".join(text_components)
 
+            logger.info(f"Creating embedding for race: {rc.race_name}")
             embedding = generate_embedding(comprehensive_text)
             if embedding:
                 new_embedding = RaceCardEmbedding(
