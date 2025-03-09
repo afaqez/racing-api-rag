@@ -8,7 +8,7 @@ client = RacingAPIClient()
 # data = client.search_horses(horse_name)
 
 
-race_id = "rac_11558417"
+race_id = "rac_11570455"
 data = client.result(race_id)
 print(json.dumps(data, indent=4))
 

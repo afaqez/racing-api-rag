@@ -1,5 +1,5 @@
 # app/models/racing.py
-from sqlalchemy import Column, Integer, String, DateTime, JSON
+from sqlalchemy import Column, Integer, String, DateTime, JSON, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 
@@ -14,9 +14,12 @@ class RaceCard(Base):
     date = Column(DateTime)
     off_time = Column(String)
     race_name = Column(String)
+    race_class = Column(String)
     distance = Column(String)
-    odds = Column(JSON) 
     going = Column(String)
+    prize = Column(String)
+    big_race = Column(Boolean)
+    is_abandoned = Column(Boolean)
     raw_data = Column(JSON)  
 
     @classmethod
@@ -38,9 +41,12 @@ class RaceCard(Base):
                 instance.date = datetime.utcnow()  # Fallback if parsing fails
             instance.off_time = item.get("off_time")
             instance.race_name = item.get("race_name")
+            instance.race_class = item.get("race_class")
             instance.distance = item.get("distance")
-            instance.odds = item.get("runners")
             instance.going = item.get("going")
+            instance.prize = item.get("prize")
+            instance.big_race = item.get("big_race")
+            instance.is_abandoned = item.get("is_abandoned")
             instance.raw_data = item
             db.merge(instance)
         db.commit()

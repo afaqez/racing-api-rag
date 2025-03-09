@@ -9,6 +9,10 @@ from app.core.database import SessionLocal
 from app.services.racing_api_client import RacingAPIClient
 
 
+
+horse_names = []
+
+
 # One of the main data sources is the RaceCard API
 # Fetches racecards for today and all future racecards
 # Prize is in the RaceCard API Call
@@ -16,6 +20,9 @@ def ingest_racecards(db):
     client = RacingAPIClient()
     logger.info("Fetching racecards data...")
     data = client.racecards_standard({"day": "today"})
+    for racecard in data.get("racecards", []):
+        print(f"Found {len(racecard.get('runners'))} runners in race {racecard.get('race_id')}")
+        horse_names.append(racecard.get("runners")[0].get("horse_name"))
     RaceCard.upsert_from_api(db, data)
 
 # Course data is missing Name and Region Codes in the main table
@@ -73,11 +80,11 @@ def full_ingestion_job():
     db = SessionLocal()
     try:
         ingest_racecards(db)
-        ingest_courses(db)
-        ingest_horses(db)
-        ingest_jockeys(db)
-        ingest_trainers(db)
-        ingest_owners(db)
+        # ingest_courses(db)
+        # ingest_horses(db)
+        # ingest_jockeys(db)
+        # ingest_trainers(db)
+        # ingest_owners(db)
         logger.info("Full ingestion job completed successfully.")
     except Exception as e:
         logger.error("Error during full ingestion job: %s", e)
