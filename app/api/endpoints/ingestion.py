@@ -7,14 +7,12 @@ router = APIRouter()
 
 
 @router.post("/ingest", summary="Trigger the full ingestion job")
-def trigger_ingestion(limit: int = 10):
+def trigger_ingestion():
     try:
         logger.info("Manually triggering ingestion job...")
-        # full_ingestion_job()
-        vectorize_new_racecards(limit=limit)
-        return {
-            "message": f"Ingestion job triggered successfully. Processed up to {limit} records."
-        }
+        full_ingestion_job()
+        vectorize_new_racecards()
+        return {"message": "Ingestion job triggered successfully."}
     except Exception as e:
         logger.error(f"Error during ingestion job: {e}")
         raise HTTPException(status_code=500, detail="Ingestion job failed.")

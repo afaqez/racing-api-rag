@@ -5,19 +5,17 @@ from app.utils.embedding import generate_embedding
 from app.core.logging import logger
 
 
-def vectorize_new_racecards(limit: int = 10):
+def vectorize_new_racecards():
     """
     Create rich embeddings incorporating all relevant race information
     """
-    logger.info(f"Starting vectorization job (limit: {limit})...")
+    logger.info(f"Starting vectorization job...")
     db = SessionLocal()
     try:
         racecards = db.query(RaceCard).all()
         count = 0
         total_processed = 0
         for rc in racecards:
-            if count >= limit:
-                break
 
             total_processed += 1
             existing = (

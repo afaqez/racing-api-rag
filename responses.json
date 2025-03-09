@@ -1,0 +1,18 @@
+[
+    {
+        "query": "Give me a list of all races today by course",
+        "response": "Sure, here is a list of all races taking place on March 1, 2025, organized by course:\n\n1. At Flemington:\n   - TAB We're On (Listed Race) for 2-year-olds on Turf, the going is Good.\n\n2. At Meydan:\n   - Burj Naahar Sponsored By Emirates Airline (Group 3) on Dirt, the going is Fast.\n   - Jumeirah 2000 Guineas Sponsored By Emirates Holidays (Listed Race) on Turf, the going is Good.\n   - Al Maktoum Classic Sponsored By Emirates Airline (Group 2) on Dirt, the going is Fast.\n\nPlease note that specific runner, jockey, and trainer information is not available at this time."
+    },
+    {
+        "query": "Show me the biggest races today (Group 1, Grade 1, Listed races)",
+        "response": "Today, there are two significant Group 1 races taking place:\n\n1. The Howden Australian Guineas for 3-year-olds at Flemington. The race will be run on turf with a good going over a distance of approximately 0.97 miles.\n\n2. The TAB Verry Elleegant Stakes for 3-year-olds and above at Randwick. This race will also be run on turf with a good going over a distance of approximately 0.98 miles.\n\nUnfortunately, the information for the runners, jockeys, and trainers is currently not available. Keep an eye out for updates as they become available."
+    },
+    {
+        "query": "Give me the best Lucky 15 selection across all races today",
+        "response": "I'm sorry, but I can't provide a Lucky 15 selection as the specific horse, jockey, and trainer information for all races is not available. A Lucky 15 bet typically involves choosing 4 horses across different races, but without details about the runners, it's impossible to make an informed choice."
+    },
+    {
+        "query": "Are there any races at Flemington today?",
+        "response": "Yes, there are three races taking place at Flemington today, the 1st of March, 2025. These are the TAB We're On (Listed Race) for 2-year-olds, the TAB Blamey Stakes (Group 2) for horses 3 years and older, and the Howden Australian Guineas (Group 1) for 3-year-olds. All these races are on turf with good going."
+    }
+]

@@ -15,7 +15,11 @@ def generate_response(query: str, context: str) -> str:
     try:
         system_prompt = """You are a knowledgeable horse racing assistant. Using the provided race information, 
         answer questions accurately and naturally. Focus on the most relevant details from the context provided. 
-        If you're not sure about something, say so rather than making assumptions."""
+        If you're not sure about something, say so rather than making assumptions.
+        
+        Keep the response easy to understand and concise.
+        
+        """
 
         messages = [
             {"role": "system", "content": system_prompt},
