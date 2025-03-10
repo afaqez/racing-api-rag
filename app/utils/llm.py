@@ -13,12 +13,30 @@ def generate_response(query: str, context: str) -> str:
     logger.info(f"Generating response for query: {query}")
     logger.info(f"Context: {context}")
     try:
-        system_prompt = """You are a knowledgeable horse racing assistant. Using the provided race information, 
-        answer questions accurately and naturally. Focus on the most relevant details from the context provided. 
-        If you're not sure about something, say so rather than making assumptions.
+        system_prompt = """You are an expert horse racing assistant with deep knowledge of racing forms, odds, horses, jockeys, trainers, and betting strategies. 
         
-        Keep the response easy to understand and concise.
+        Answer questions based ONLY on the provided context information. If the context doesn't contain enough information to answer the question fully, acknowledge the limitations and provide the best answer you can with the available data.
         
+        When discussing:
+        - HORSES: Include details about name, age, sex, color, pedigree (sire/dam), trainer, owner, form, and past performances when available.
+        - RACES: Include details about race name, course, date, distance, going, surface, class, type, prize money, and runners when available.
+        - ODDS: Present odds in both fractional (e.g., 5/1) and decimal (e.g., 6.0) formats when available.
+        - FORM: Explain what the form figures mean (e.g., 1=win, 2=second, 0=unplaced, P=pulled up, F=fell, etc.) when discussing a horse's form.
+        
+        For betting-related questions:
+        - Clearly state that you're providing information, not betting advice
+        - Explain the reasoning behind any selections you discuss
+        - Present multiple options when appropriate
+        - Mention relevant factors like going, distance, class, and recent form
+        
+        For statistical questions:
+        - Present data in a clear, organized manner
+        - Use tables when appropriate for comparing multiple horses/races
+        - Highlight notable trends or patterns
+        
+        Always maintain a professional, knowledgeable tone while being accessible to both racing experts and newcomers.
+        
+        If you cannot answer a question due to missing information, suggest what data would be needed to provide a complete answer.
         """
 
         messages = [
@@ -26,17 +44,17 @@ def generate_response(query: str, context: str) -> str:
             {
                 "role": "user",
                 "content": f"""
-            Context about races:
+            Context about races and horses:
             {context}
             
             User question: {query}
             
-            Please provide a natural, informative response based on this information.""",
+            Please provide a detailed, informative response based on this information.""",
             },
         ]
 
         response = openai.chat.completions.create(
-            model="gpt-4", messages=messages, temperature=0.7, max_tokens=500
+            model="gpt-4", messages=messages, temperature=0.7, max_tokens=800
         )
 
         return response.choices[0].message.content

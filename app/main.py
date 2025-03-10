@@ -3,34 +3,12 @@ from sqlalchemy import text
 from app.api.endpoints import racing, chat, session, formatting, ingestion
 from app.core import scheduler
 from app.core.database import engine
-from app.models import (
-    racing as racing_models,
-    course as course_models,
-    horse as horse_models,
-    jockey as jockey_models,
-    trainer as trainer_models,
-    owner as owner_models,
-    session as session_models,
-    embedding as embedding_models,
-)
 from app.core.logging import logger
 import uvicorn
+from app.create_tables import create_tables
 
-# Ensure pgvector extension is enabled
-with engine.connect() as connection:
-    logger.info("Ensuring pgvector extension is enabled...")
-    connection.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
-    connection.commit()
-
-# Create database tables (for production, use migrations)
-racing_models.Base.metadata.create_all(bind=engine)
-course_models.Base.metadata.create_all(bind=engine)
-horse_models.Base.metadata.create_all(bind=engine)
-jockey_models.Base.metadata.create_all(bind=engine)
-trainer_models.Base.metadata.create_all(bind=engine)
-owner_models.Base.metadata.create_all(bind=engine)
-session_models.Base.metadata.create_all(bind=engine)
-embedding_models.Base.metadata.create_all(bind=engine)
+# Create all tables using our custom function
+create_tables()
 
 app = FastAPI(title="Racing Data & Chat API")
 
