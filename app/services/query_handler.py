@@ -4,6 +4,7 @@ from app.utils.helpers import cosine_similarity
 from app.utils.llm import generate_response
 from app.core.logging import logger
 import json
+from datetime import datetime, timedelta
 
 
 def retrieve_context_from_pgvector(query: str, db, top_k: int = 5):
@@ -18,6 +19,10 @@ def retrieve_context_from_pgvector(query: str, db, top_k: int = 5):
 
     # Format the embedding as a PostgreSQL array literal with square brackets
     embedding_array = f"[{','.join(str(x) for x in query_embedding)}]"
+    
+    # Check if the query is about today's races
+    today_keywords = ["today", "this day", "current day", "happening now"]
+    is_today_query = any(keyword in query.lower() for keyword in today_keywords)
     
     # Query for similar racecards
     try:
@@ -34,27 +39,92 @@ def retrieve_context_from_pgvector(query: str, db, top_k: int = 5):
         horses = []
         
         if racecard_table_exists:
-            # Query for similar racecards using direct SQL with the embedding array
-            racecard_sql = text(f"""
-                SELECT r.race_id, 
-                       rc.race_name,
-                       rc.course,
-                       rc.date,
-                       rc.distance,
-                       rc.going,
-                       rc.surface,
-                       rc.race_class,
-                       rc.race_type,
-                       rc.prize,
-                       rc.raw_data
-                FROM racecard_embeddings r
-                JOIN racecards rc ON r.race_id = rc.race_id
-                ORDER BY r.embedding <-> '{embedding_array}'::vector
-                LIMIT :top_k
-            """)
-            racecard_result = db.execute(racecard_sql, {"top_k": top_k})
-            racecards = racecard_result.fetchall()
-            logger.info(f"Found {len(racecards)} similar races")
+            # If query is about today, prioritize today's races
+            if is_today_query:
+                # Get today's date in the format stored in the database
+                today = datetime.now().date()
+                tomorrow = today + timedelta(days=1)
+                
+                # Query for today's races first
+                today_races_sql = text("""
+                    SELECT 
+                        rc.race_id, 
+                        rc.race_name,
+                        rc.course,
+                        rc.date,
+                        rc.distance,
+                        rc.going,
+                        rc.surface,
+                        rc.race_class,
+                        rc.race_type,
+                        rc.prize,
+                        rc.raw_data
+                    FROM racecards rc
+                    WHERE rc.date >= :today AND rc.date < :tomorrow
+                    LIMIT :top_k
+                """)
+                
+                today_races_result = db.execute(today_races_sql, {
+                    "today": today, 
+                    "tomorrow": tomorrow,
+                    "top_k": top_k
+                })
+                
+                racecards = today_races_result.fetchall()
+                logger.info(f"Found {len(racecards)} races for today")
+                
+                # If we didn't find enough races for today, fall back to vector search
+                if len(racecards) < top_k:
+                    remaining = top_k - len(racecards)
+                    
+                    # Query for similar racecards using direct SQL with the embedding array
+                    racecard_sql = text(f"""
+                        SELECT r.race_id, 
+                               rc.race_name,
+                               rc.course,
+                               rc.date,
+                               rc.distance,
+                               rc.going,
+                               rc.surface,
+                               rc.race_class,
+                               rc.race_type,
+                               rc.prize,
+                               rc.raw_data
+                        FROM racecard_embeddings r
+                        JOIN racecards rc ON r.race_id = rc.race_id
+                        ORDER BY r.embedding <-> '{embedding_array}'::vector
+                        LIMIT :remaining
+                    """)
+                    
+                    racecard_result = db.execute(racecard_sql, {"remaining": remaining})
+                    additional_racecards = racecard_result.fetchall()
+                    
+                    # Add the additional racecards to our list
+                    racecards.extend(additional_racecards)
+                    logger.info(f"Added {len(additional_racecards)} additional races from vector search")
+            else:
+                # Regular vector search for non-today queries
+                racecard_sql = text(f"""
+                    SELECT r.race_id, 
+                           rc.race_name,
+                           rc.course,
+                           rc.date,
+                           rc.distance,
+                           rc.going,
+                           rc.surface,
+                           rc.race_class,
+                           rc.race_type,
+                           rc.prize,
+                           rc.raw_data
+                    FROM racecard_embeddings r
+                    JOIN racecards rc ON r.race_id = rc.race_id
+                    ORDER BY r.embedding <-> '{embedding_array}'::vector
+                    LIMIT :top_k
+                """)
+                
+                racecard_result = db.execute(racecard_sql, {"top_k": top_k})
+                racecards = racecard_result.fetchall()
+                logger.info(f"Found {len(racecards)} similar races")
         
         if horse_table_exists:
             # Query for similar horses using direct SQL with the embedding array
@@ -110,6 +180,11 @@ def process_query(query: str, chat_history: str, db) -> str:
     if use_retrieval:
         # Increase top_k for more comprehensive context
         retrieved = retrieve_context_from_pgvector(query, db, top_k=5)
+        
+        # Check if we found any races
+        if not retrieved["racecards"] and "today" in query.lower():
+            # Special handling for today's races when none are found
+            return "I don't have information about any races scheduled for today in my database. The database may not have been updated with today's racing schedule yet. To provide information about races you can bet on today, I would need details about today's race meetings, including race names, courses, times, and runners."
         
         if not retrieved["racecards"] and not retrieved["horses"]:
             return "I couldn't find any relevant information to answer your question. Our database currently contains information about horses and upcoming races, but we don't yet have comprehensive historical results data."

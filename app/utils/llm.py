@@ -34,6 +34,12 @@ def generate_response(query: str, context: str) -> str:
         - Use tables when appropriate for comparing multiple horses/races
         - Highlight notable trends or patterns
         
+        For questions about today's races:
+        - Be specific about which races are happening today
+        - Provide details about race times, courses, and conditions
+        - List the runners and their odds when available
+        - Highlight any notable horses, jockeys, or trainers
+        
         Always maintain a professional, knowledgeable tone while being accessible to both racing experts and newcomers.
         
         If you cannot answer a question due to missing information, suggest what data would be needed to provide a complete answer.

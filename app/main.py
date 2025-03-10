@@ -6,11 +6,22 @@ from app.core.database import engine
 from app.core.logging import logger
 import uvicorn
 from app.create_tables import create_tables
+from fastapi.middleware.cors import CORSMiddleware
 
 # Create all tables using our custom function
 create_tables()
 
 app = FastAPI(title="Racing Data & Chat API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", 'https://racing-insights.vercel.app'],  # Frontend URLs
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all methods
+    allow_headers=["*"],  # Allow all headers
+)
+
+
 
 app.include_router(racing.router, prefix="/api/racing", tags=["Racing"])
 app.include_router(chat.router, prefix="/api/chat", tags=["Chat"])
