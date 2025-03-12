@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.services.ingestion import full_ingestion_job
-from app.services.vectorization import vectorize_new_racecards, vectorize_horses
+from app.services.vectorization import vectorize_all
 from app.core.logging import logger
 
 router = APIRouter()
@@ -11,13 +11,12 @@ def trigger_ingestion():
     try:
         logger.info("Manually triggering ingestion job...")
         # Run the full ingestion job to get all data
-        full_ingestion_job()
+        # full_ingestion_job()
         
-        # Vectorize both racecards and horses
-        # logger.info("Starting vectorization of racecards and horses...")
-        # vectorize_new_racecards()
-        # vectorize_horses()
-        # logger.info("Vectorization completed successfully")
+        # Vectorize all entities
+        logger.info("Starting vectorization of all entities...")
+        vectorize_all()
+        logger.info("Vectorization completed successfully")
         
         return {"message": "Ingestion and vectorization jobs completed successfully."}
     except Exception as e:
@@ -29,9 +28,8 @@ def trigger_ingestion():
 def trigger_vectorization():
     try:
         logger.info("Manually triggering vectorization job...")
-        # Vectorize both racecards and horses
-        vectorize_new_racecards()
-        vectorize_horses()
+        # Vectorize all entities
+        vectorize_all()
         return {"message": "Vectorization job completed successfully."}
     except Exception as e:
         logger.error(f"Error during vectorization job: {e}")
