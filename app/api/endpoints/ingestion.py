@@ -11,13 +11,13 @@ def trigger_ingestion():
     try:
         logger.info("Manually triggering ingestion job...")
         # Run the full ingestion job to get all data
-        # full_ingestion_job()
+        full_ingestion_job()
         
         # Vectorize both racecards and horses
-        logger.info("Starting vectorization of racecards and horses...")
-        vectorize_new_racecards()
-        vectorize_horses()
-        logger.info("Vectorization completed successfully")
+        # logger.info("Starting vectorization of racecards and horses...")
+        # vectorize_new_racecards()
+        # vectorize_horses()
+        # logger.info("Vectorization completed successfully")
         
         return {"message": "Ingestion and vectorization jobs completed successfully."}
     except Exception as e:

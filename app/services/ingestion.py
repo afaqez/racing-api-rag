@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 def ingest_racecards(db):
     client = RacingAPIClient()
     logger.info("Fetching racecards data...")
-    data = client.racecards_standard({"day": "today"})
+    data = client.racecards_pro({"date": "2025-03-10"})
     
     # Log the number of racecards and runners
     racecards = data.get("racecards", [])
@@ -178,9 +178,9 @@ def full_ingestion_job():
         race_ids = ingest_racecards(db)
         
         # Then try to get results for those races
-        # ingest_results(db, race_ids)
+        ingest_results(db, race_ids)
         
-        # # Also get some historical results
+        # Also get some historical results
         # ingest_results(db)
         
         # Ingest courses for reference data
