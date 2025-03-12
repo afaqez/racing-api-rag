@@ -1,9 +1,8 @@
 # app/models/session.py
 from sqlalchemy import Column, Integer, String, DateTime, Text
-from sqlalchemy.ext.declarative import declarative_base
+from app.models.base import Base
 from datetime import datetime
 
-Base = declarative_base()
 
 class ChatSession(Base):
     __tablename__ = "chat_sessions"

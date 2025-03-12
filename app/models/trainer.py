@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, JSON
-from sqlalchemy.ext.declarative import declarative_base
+from app.models.base import Base
 
-Base = declarative_base()
 
 class Trainer(Base):
     __tablename__ = "trainers"
@@ -24,3 +23,4 @@ class Trainer(Base):
             instance.raw_data = item
             db.merge(instance)
         db.commit()
+ 

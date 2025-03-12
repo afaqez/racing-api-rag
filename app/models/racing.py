@@ -1,9 +1,7 @@
 # app/models/racing.py
 from sqlalchemy import Column, Integer, String, DateTime, JSON, Boolean
-from sqlalchemy.ext.declarative import declarative_base
+from app.models.base import Base
 from datetime import datetime
-
-Base = declarative_base()
 
 class RaceCard(Base):
     __tablename__ = "racecards"

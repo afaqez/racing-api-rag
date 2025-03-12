@@ -1,7 +1,5 @@
 from sqlalchemy import Column, Integer, String, JSON, DateTime
-from sqlalchemy.ext.declarative import declarative_base
-
-Base = declarative_base()
+from app.models.base import Base
 
 class Horse(Base):
     __tablename__ = "horses"

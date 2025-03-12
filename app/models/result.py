@@ -1,9 +1,7 @@
 from sqlalchemy import Column, Integer, String, DateTime, JSON, Float, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
 from datetime import datetime
-
-Base = declarative_base()
+from app.models.base import Base
 
 class HorseResult(Base):
     __tablename__ = "results"

@@ -4,12 +4,20 @@ from app.api.endpoints import racing, chat, session, formatting, ingestion
 from app.core import scheduler
 from app.core.database import engine
 from app.core.logging import logger
+from app.models.base import Base
+
 import uvicorn
-from app.create_tables import create_tables
 from fastapi.middleware.cors import CORSMiddleware
 
-# Create all tables using our custom function
-create_tables()
+# Ensure pgvector extension is enabled
+with engine.connect() as connection:
+    logger.info("Ensuring pgvector extension is enabled...")
+    connection.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
+    connection.commit()
+
+# Create all tables
+logger.info("Creating database tables...")
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Racing Data & Chat API")
 

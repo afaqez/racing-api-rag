@@ -1,8 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
+from app.models.base import Base
 from sqlalchemy.types import UserDefinedType
 
-Base = declarative_base()
 
 # Define a custom Vector type for pgvector
 class Vector(UserDefinedType):

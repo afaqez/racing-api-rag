@@ -1,7 +1,5 @@
 from sqlalchemy import Column, Integer, String, JSON
-from sqlalchemy.ext.declarative import declarative_base
-
-Base = declarative_base()
+from app.models.base import Base
 
 class Owner(Base):
     __tablename__ = "owners"
