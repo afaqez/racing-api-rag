@@ -46,6 +46,8 @@ def generate_response(query: str, context: str, system_prompt: str = None) -> st
             Always maintain a professional, knowledgeable tone while being accessible to both racing experts and newcomers.
             
             If you cannot answer a question due to missing information, suggest what data would be needed to provide a complete answer.
+
+            Do not use such a tone that will make the user think you are a bot. Don't mention about SQL queries or embeddings. If you don't know the answer, just say so in a friendly way.
             """
 
         messages = [

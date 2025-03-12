@@ -1,3 +1,4 @@
+import calendar
 from sqlalchemy import text, inspect
 from app.utils.embedding import generate_embedding
 from app.utils.helpers import cosine_similarity
@@ -6,7 +7,14 @@ from app.core.logging import logger
 from datetime import datetime, timedelta
 import json
 import re
-import calendar
+
+def retrieve_context_from_pgvector(query: str, db, top_k: int = 5):
+    """
+    Generate an embedding for the query and search across all embedding tables
+    to return the most semantically relevant matches.
+    """
+    # ... existing code ...
+    # This remains as a fallback method
 
 def get_db_schema(db):
     """Extract database schema information to provide to the LLM"""
@@ -16,17 +24,18 @@ def get_db_schema(db):
     for table_name in inspector.get_table_names():
         columns = []
         for column in inspector.get_columns(table_name):
-            columns.append({
+            column_info = {
                 "name": column["name"],
                 "type": str(column["type"])
-            })
+            }
+            columns.append(column_info)
         
         schema_info[table_name] = {
             "columns": columns,
             "relationships": []
         }
         
-        # Add foreign keys
+        # Add foreign keys to understand relationships
         for fk in inspector.get_foreign_keys(table_name):
             schema_info[table_name]["relationships"].append({
                 "referred_table": fk["referred_table"],
@@ -183,6 +192,7 @@ def generate_sql_from_natural_language(query, schema_info):
     2. For 'racecards' table, runner information is in raw_data->'runners' as a JSON array
     3. When filtering for dates, use the date filter provided in the context
     4. Use jsonb_array_elements() to query elements in JSON arrays
+    5. DO NOT include code fence markers (```) in your response
     
     If you cannot generate SQL for this question, respond with: "QUERY_ERROR: Unable to generate SQL"
     """
@@ -322,7 +332,13 @@ ORDER BY type, off_time, horse
             max_tokens=600
         )
         
+        # Get the SQL and clean it
         sql = response.choices[0].message.content.strip()
+        
+        # Remove markdown code fence if present
+        sql = re.sub(r'^```sql\s*', '', sql)
+        sql = re.sub(r'\s*```$', '', sql)
+        sql = sql.strip()
         
         if sql.startswith("QUERY_ERROR"):
             logger.warning(f"LLM couldn't generate SQL: {sql}")
